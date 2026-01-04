@@ -1,0 +1,188 @@
+@import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: rgb(250, 250, 252);
+  --foreground: rgb(9, 9, 11);
+  --card: rgb(255, 255, 255);
+  --card-foreground: rgb(9, 9, 11);
+  --popover: rgb(255, 255, 255);
+  --popover-foreground: rgb(9, 9, 11);
+  --primary: rgb(24, 24, 27);
+  --primary-foreground: rgb(250, 250, 250);
+  --secondary: rgb(244, 244, 245);
+  --secondary-foreground: rgb(24, 24, 27);
+  --muted: rgb(244, 244, 245);
+  --muted-foreground: rgb(113, 113, 122);
+  --accent: rgb(244, 244, 245);
+  --accent-foreground: rgb(24, 24, 27);
+  --destructive: rgb(239, 68, 68);
+  --border: rgb(228, 228, 231);
+  --input: rgb(228, 228, 231);
+  --ring: rgb(161, 161, 170);
+  --chart-1: rgb(251, 146, 60);
+  --chart-2: rgb(59, 130, 246);
+  --chart-3: rgb(34, 197, 94);
+  --chart-4: rgb(251, 191, 36);
+  --chart-5: rgb(249, 115, 22);
+  --sidebar: rgb(250, 250, 250);
+  --sidebar-foreground: rgb(9, 9, 11);
+  --sidebar-primary: rgb(24, 24, 27);
+  --sidebar-primary-foreground: rgb(250, 250, 250);
+  --sidebar-accent: rgb(244, 244, 245);
+  --sidebar-accent-foreground: rgb(24, 24, 27);
+  --sidebar-border: rgb(228, 228, 231);
+  --sidebar-ring: rgb(161, 161, 170);
+}
+
+.dark {
+  --background: rgb(9, 9, 11);
+  --foreground: rgb(250, 250, 250);
+  --card: rgb(24, 24, 27);
+  --card-foreground: rgb(250, 250, 250);
+  --popover: rgb(24, 24, 27);
+  --popover-foreground: rgb(250, 250, 250);
+  --primary: rgb(228, 228, 231);
+  --primary-foreground: rgb(24, 24, 27);
+  --secondary: rgb(39, 39, 42);
+  --secondary-foreground: rgb(250, 250, 250);
+  --muted: rgb(39, 39, 42);
+  --muted-foreground: rgb(161, 161, 170);
+  --accent: rgb(39, 39, 42);
+  --accent-foreground: rgb(250, 250, 250);
+  --destructive: rgb(248, 113, 113);
+  --border: rgba(255, 255, 255, 0.1);
+  --input: rgba(255, 255, 255, 0.15);
+  --ring: rgb(113, 113, 122);
+  --chart-1: rgb(99, 102, 241);
+  --chart-2: rgb(34, 197, 94);
+  --chart-3: rgb(249, 115, 22);
+  --chart-4: rgb(168, 85, 247);
+  --chart-5: rgb(239, 68, 68);
+  --sidebar: rgb(24, 24, 27);
+  --sidebar-foreground: rgb(250, 250, 250);
+  --sidebar-primary: rgb(99, 102, 241);
+  --sidebar-primary-foreground: rgb(250, 250, 250);
+  --sidebar-accent: rgb(39, 39, 42);
+  --sidebar-accent-foreground: rgb(250, 250, 250);
+  --sidebar-border: rgba(255, 255, 255, 0.1);
+  --sidebar-ring: rgb(113, 113, 122);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "ss01", "ss02", "cv01";
+  }
+}
+
+.glass-gradient {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+}
+
+.glass-blur {
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.7s ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in-up,
+  .animate-fade-in,
+  .animate-scale-in {
+    animation: none;
+  }
+}
