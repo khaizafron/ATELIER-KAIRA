@@ -46,7 +46,7 @@ const SITE_EXHIBITIONS = [
     area: "Shah Alam, Selangor",
     schedule: "Saturday / 6:00 pm - 12:00 am",
     mapEmbed: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3984.0904693529164!2d101.51546707497086!3d3.0704985469052195!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31cc5286dad9dd53%3A0x1a54293008c13bb3!2sSACC%20Mall!5e0!3m2!1sen!2smy!4v1767579182203!5m2!1sen!2smy",
-    mapLink: "https://maps.app.goo.gl/your-sacc-link",
+    mapLink: "https://maps.app.goo.gl/NqAGMd4jsUe7sUaP9",
     img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&q=80&w=1200",
     description: "Located in the open car park facing SACC Mall. A prime weekend evening destination for collectors seeking authenticated vintage pieces under the city lights."
   },
@@ -59,19 +59,19 @@ const SITE_EXHIBITIONS = [
     schedule: "Saturday / 8:00 am - 12:00 pm",
     scheduleExtra: "Special Ramadan Hours: Daily / 6:00 pm - 1:00 am",
     mapEmbed: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.458814900698!2d103.70308100973831!3d1.495766761084828!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31da72bf8ae5d21f%3A0xd6d33197fa98bc16!2sAngsana%20Johor%20Bahru%20Mall%2C%20Johor%20Bahru!5e0!3m2!1sen!2smy!4v1767579409608!5m2!1sen!2smy",
-    mapLink: "https://maps.app.goo.gl/your-angsana-link",
+    mapLink: "https://maps.app.goo.gl/JfkFHEg8Lx6pG6H99",
     img: "https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?auto=format&fit=crop&q=80&w=1200",
     description: "Our signature morning market experience. Early access for dedicated collectors, with extended evening hours throughout Ramadan 2025 for a blessed selection period."
   },
   {
     id: "SITE // 03",
-    name: "CBS Mall @ Kota Damansara",
+    name: "CBS @ Kota Damansara",
     subtext: "SUNDAY ARCHIVE / SELANGOR",
     address: "CBS Kota Damansara",
     area: "Kota Damansara, Petaling Jaya, Selangor",
     schedule: "Sunday / 6:00 pm - 12:00 am",
     mapEmbed: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3983.7331946814884!2d101.57190367497121!3d3.1648348968105076!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31cc4f006aacdf73%3A0xa4c73a299ed37886!2sCBS%20Kota%20damansara!5e0!3m2!1sen!2smy!4v1767579545357!5m2!1sen!2smy",
-    mapLink: "https://maps.app.goo.gl/your-cbs-link",
+    mapLink: "https://maps.app.goo.gl/V9ZzyyT3SZjeLgnGA",
     img: "https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?auto=format&fit=crop&q=80&w=1200",
     description: "Your exclusive Sunday evening sanctuary. A carefully curated selection in the heart of Kota Damansara, perfect for closing your week with timeless acquisitions."
   }
