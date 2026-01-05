@@ -8,8 +8,9 @@ import { AddToCartButton } from "@/components/AddToCartButton"
 import { ImageGallery } from "./ImageGallery"
 import Link from "next/link"
 import { ArrowLeft, MapPin, MessageCircle } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useParams, useRouter } from "next/navigation"
+
 
 interface ItemImage {
   id: string
@@ -38,16 +39,27 @@ interface Item {
   measurements?: ItemMeasurement[]
 }
 
-function generateVisitorId() {
-  if (typeof crypto !== "undefined" && crypto.getRandomValues) {
-    return Array.from(crypto.getRandomValues(new Uint8Array(16)))
-      .map((b) => b.toString(16).padStart(2, "0"))
-      .join("")
+function getVisitorId() {
+  if (typeof window === "undefined") return null
+
+  let visitorId = localStorage.getItem("visitor_id")
+
+  if (!visitorId) {
+    visitorId =
+      typeof crypto !== "undefined" && crypto.getRandomValues
+        ? Array.from(crypto.getRandomValues(new Uint8Array(16)))
+            .map((b) => b.toString(16).padStart(2, "0"))
+            .join("")
+        : `${Date.now()}-${Math.random().toString(36).slice(2)}`
+
+    localStorage.setItem("visitor_id", visitorId)
   }
-  return `${Date.now()}-${Math.random().toString(36).slice(2)}`
+
+  return visitorId
 }
 
 export default function ItemDetailPage() {
+  const hasRecordedView = useRef(false)
   const params = useParams()
   const router = useRouter()
   const slug = params?.slug as string
@@ -117,6 +129,21 @@ export default function ItemDetailPage() {
         }
 
         setItem(data as Item)
+        // ✅ RECORD ITEM VIEW (SAFE)
+if (!hasRecordedView.current) {
+  hasRecordedView.current = true
+
+  try {
+    await supabase.from("analytics_item_views").insert({
+      item_id: data.id,
+      visitor_id: getVisitorId(),
+    })
+  } catch {
+    // analytics must NEVER break UX
+  }
+}
+
+
       } catch (err) {
         console.error('Fetch error:', err)
         router.push('/collection')
@@ -148,7 +175,7 @@ export default function ItemDetailPage() {
     try {
       const body = JSON.stringify({
         item_id: item.id,
-        visitor_id: generateVisitorId(),
+        visitor_id: getVisitorId(),
       })
 
       const blob = new Blob([body], { type: "application/json" })
