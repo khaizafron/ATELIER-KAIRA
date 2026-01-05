@@ -95,14 +95,16 @@ export default async function AdminReportsPage() {
     .from("whatsapp_clicks")
     .select("*", { count: 'exact', head: true })
 
-  const { data: salesData } = await supabase
-    .from("sales")
-    .select("sold_price")
+ 
 
   const totalViews = totalViewsCount || 0
   const totalClicks = totalClicksCount || 0
   const conversionRate = totalViews ? (totalClicks / totalViews) * 100 : 0
-  const totalRevenue = (salesData || []).reduce((sum, sale) => sum + Number(sale.sold_price), 0)
+  const totalRevenue = (items || [])
+  .filter(item => item.status === "sold" || item.status === "offline_sold")
+  .reduce((sum, item) => sum + Number(item.price || 0), 0)
+
+ 
 
   return (
     <div className="min-h-screen">

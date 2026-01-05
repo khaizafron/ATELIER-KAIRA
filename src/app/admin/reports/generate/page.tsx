@@ -1,9 +1,5 @@
 import { createClient } from "@supabase/supabase-js"
-import { GlassCard } from "@/components/glass"
-import { Eye, MessageCircle, TrendingUp, Download, Printer, ArrowLeft, FileText, BarChart3, PieChart, DollarSign, Package, ShoppingCart } from "lucide-react"
-import Link from "next/link"
 import ReportClient from "./report-client"
-import { redirect } from "next/navigation"
 
 type ItemStat = {
   id: string
@@ -26,7 +22,7 @@ export default async function GenerateReportPage({
 }) {
   const params = await searchParams
   const dateRange = params.range || 'all'
-  
+
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
@@ -38,6 +34,7 @@ export default async function GenerateReportPage({
     }
   )
 
+  /* ---------------- DATE FILTER (ANALYTICS ONLY) ---------------- */
   const getDateFilter = () => {
     const now = new Date()
     switch (dateRange) {
@@ -56,45 +53,43 @@ export default async function GenerateReportPage({
 
   const dateFilter = getDateFilter()
 
-  const { data: items, error: itemsError } = await supabase
+  /* ---------------- ITEMS = SOURCE OF TRUTH ---------------- */
+  const { data: items, error } = await supabase
     .from("items")
     .select("*")
-    .order("created_at", { ascending: false })
 
-  if (itemsError) {
-    console.error("Error fetching items:", itemsError)
-    throw new Error("Failed to fetch items data")
+  if (error) {
+    throw new Error("Failed to fetch items")
   }
 
-  const itemsWithStats = await Promise.all(
-    (items || []).map(async (item) => {
-      const viewQuery = supabase
+  const safeItems = items || []
+
+  /* ---------------- ITEM STATS (VIEWS & CLICKS) ---------------- */
+  const itemsWithStats: ItemStat[] = await Promise.all(
+    safeItems.map(async (item) => {
+      let viewQuery = supabase
         .from("analytics_item_views")
         .select("*", { count: 'exact', head: true })
-        .eq('item_id', item.id)
-      
-      if (dateFilter) {
-        viewQuery.gte('created_at', dateFilter)
-      }
-      
+        .eq("item_id", item.id)
+
+      if (dateFilter) viewQuery = viewQuery.gte("created_at", dateFilter)
+
       const { count: viewCount } = await viewQuery
 
-      const clickQuery = supabase
+      let clickQuery = supabase
         .from("whatsapp_clicks")
         .select("*", { count: 'exact', head: true })
-        .eq('item_id', item.id)
-      
-      if (dateFilter) {
-        clickQuery.gte('created_at', dateFilter)
-      }
-      
+        .eq("item_id", item.id)
+
+      if (dateFilter) clickQuery = clickQuery.gte("created_at", dateFilter)
+
       const { count: clickCount } = await clickQuery
 
       return {
         id: item.id,
         title: item.title,
         slug: item.slug,
-        price: Number(item.price),
+        price: Number(item.price || 0),
         status: item.status,
         viewCount: viewCount || 0,
         clickCount: clickCount || 0
@@ -102,33 +97,50 @@ export default async function GenerateReportPage({
     })
   )
 
-  const totalViews = itemsWithStats.reduce((sum, item) => sum + item.viewCount, 0)
-  const totalClicks = itemsWithStats.reduce((sum, item) => sum + item.clickCount, 0)
+  /* ---------------- KPI: VIEWS / CLICKS ---------------- */
+  const totalViews = itemsWithStats.reduce((s, i) => s + i.viewCount, 0)
+  const totalClicks = itemsWithStats.reduce((s, i) => s + i.clickCount, 0)
   const conversionRate = totalViews ? (totalClicks / totalViews) * 100 : 0
-  
-  let salesQuery = supabase
-    .from("sales")
-    .select("sold_price, sold_at, item_id")
-  
-  if (dateFilter) {
-    salesQuery = salesQuery.gte('sold_at', dateFilter)
-  }
 
-  const { data: salesData, error: salesError } = await salesQuery
+  /* ---------------- SALES / REVENUE (FIXED) ---------------- */
+  const soldItems = safeItems.filter(
+    item =>
+      item.status === "sold" &&
+      item.price !== null &&
+      !isNaN(Number(item.price))
+  )
 
-  if (salesError) {
-    console.error("Error fetching sales:", salesError)
-  }
+  const totalRevenue = soldItems.reduce(
+    (sum, item) => sum + Number(item.price),
+    0
+  )
 
-  const totalRevenue = (salesData || []).reduce((sum, sale) => sum + Number(sale.sold_price), 0)
-  const soldItemsCount = (salesData || []).length
-  const avgSalePrice = soldItemsCount > 0 ? totalRevenue / soldItemsCount : 0
-  
-  const availableItems = itemsWithStats.filter(item => item.status === 'available')
+  const soldItemsCount = soldItems.length
+
+  const avgSalePrice = soldItemsCount
+    ? totalRevenue / soldItemsCount
+    : 0
+
+  /* ---------------- INVENTORY VALUE (FIXED) ---------------- */
+  const availableItems = safeItems.filter(
+    item =>
+      item.status === "available" &&
+      item.price !== null &&
+      !isNaN(Number(item.price))
+  )
+
   const availableItemsCount = availableItems.length
-  const inventoryValue = availableItems.reduce((sum, item) => sum + item.price, 0)
-  const avgItemPrice = itemsWithStats.length > 0 ? itemsWithStats.reduce((sum, item) => sum + item.price, 0) / itemsWithStats.length : 0
 
+  const inventoryValue = availableItems.reduce(
+    (sum, item) => sum + Number(item.price),
+    0
+  )
+
+  const avgItemPrice = safeItems.length
+    ? safeItems.reduce((s, i) => s + Number(i.price || 0), 0) / safeItems.length
+    : 0
+
+  /* ---------------- LABEL ---------------- */
   const getDateRangeLabel = () => {
     switch (dateRange) {
       case 'today': return 'Today'

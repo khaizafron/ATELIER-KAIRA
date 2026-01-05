@@ -1,161 +1,133 @@
-import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { NextResponse } from 'next/server'
+import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
 
 export async function POST() {
   try {
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    // =========================
+    // 1. ITEMS
+    // =========================
+    const { data: items } = await supabase
+      .from('items')
+      .select('id, title, price, status')
 
-    const [itemsResult, visitorsResult, lastInsightResult] = await Promise.all([
-      supabase.from('items').select('*'),
-      supabase.from('visitors').select('*'),
-      supabase
-        .from('ai_insight_logs')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single(),
-    ]);
+    const totalItems = items?.length ?? 0
+    const soldItems = items?.filter(i =>
+      i.status === 'sold' || i.status === 'offline_sold'
+    ) ?? []
 
-    const items = itemsResult.data || [];
-    const visitors = visitorsResult.data || [];
+    const availableItems = items?.filter(i => i.status === 'available') ?? []
 
-    const totalItems = items.length;
-    const totalVisitors = visitors.length;
-    const availableItems = items.filter((item) => item.availability === 'available').length;
-    const soldItems = items.filter((item) => item.availability === 'sold').length;
-    const reservedItems = items.filter((item) => item.availability === 'reserved').length;
+    const totalRevenue = soldItems.reduce(
+      (sum, i) => sum + Number(i.price || 0),
+      0
+    )
 
-    const totalRevenue = items
-      .filter((item) => item.availability === 'sold')
-      .reduce((sum, item) => sum + (item.price || 0), 0);
+    // =========================
+    // 2. WEEK VISITORS (REAL FIX)
+    // =========================
+    const sevenDaysAgo = new Date()
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const todayVisitors = visitors.filter((v) => new Date(v.visited_at) >= today).length;
+    const { data: views } = await supabase
+      .from('analytics_item_views')
+      .select('visitor_id, created_at')
+      .gte('created_at', sevenDaysAgo.toISOString())
 
-    const last7Days = new Date();
-    last7Days.setDate(last7Days.getDate() - 7);
-    const weekVisitors = visitors.filter((v) => new Date(v.visited_at) >= last7Days).length;
+    const uniqueVisitors = new Set(
+      (views ?? []).map(v => v.visitor_id)
+    )
 
-    const collectionCounts: Record<string, number> = {};
-    items.forEach((item) => {
-      if (item.collection) {
-        collectionCounts[item.collection] = (collectionCounts[item.collection] || 0) + 1;
-      }
-    });
-    const topCollection = Object.entries(collectionCounts).sort((a, b) => b[1] - a[1])[0];
+    const weekVisitors = uniqueVisitors.size
 
+    // =========================
+    // 3. TOP COLLECTION (SIMPLE)
+    // =========================
+    const topCollection =
+      soldItems.length > 0 ? soldItems[0].title : 'N/A'
+
+    // =========================
+    // 4. METRICS OBJECT
+    // =========================
     const metrics = {
       totalItems,
-      totalVisitors,
-      availableItems,
-      soldItems,
-      reservedItems,
+      availableItems: availableItems.length,
+      soldItems: soldItems.length,
       totalRevenue,
-      todayVisitors,
       weekVisitors,
-      topCollection: topCollection ? topCollection[0] : 'N/A',
-      topCollectionCount: topCollection ? topCollection[1] : 0,
-    };
-
-    const openRouterApiKey = process.env.OPENROUTER_API_KEY;
-    if (!openRouterApiKey) {
-      return NextResponse.json(
-        { error: 'OpenRouter API key not configured' },
-        { status: 500 }
-      );
+      topCollection,
     }
 
-    const prompt = `You are an AI analyst for Atelier Kaira, a collectible items store. Based on the following metrics, provide 3-4 concise, actionable business insights in Bahasa Malaysia (casual/trendy tone). Focus on trends, opportunities, and recommendations.
+    // =========================
+    // 5. AI PROMPT
+    // =========================
+    const prompt = `
+Anda ialah AI Business Analyst untuk Kaira Atelier.
 
-Metrics:
-- Total Items: ${metrics.totalItems}
-- Available: ${metrics.availableItems}, Sold: ${metrics.soldItems}, Reserved: ${metrics.reservedItems}
-- Total Revenue: RM${metrics.totalRevenue.toLocaleString()}
-- Total Visitors: ${metrics.totalVisitors}
-- Today's Visitors: ${metrics.todayVisitors}
-- Last 7 Days Visitors: ${metrics.weekVisitors}
-- Top Collection: ${metrics.topCollection} (${metrics.topCollectionCount} items)
+Data minggu ini:
+- Total Items: ${totalItems}
+- Available Items: ${availableItems.length}
+- Sold Items: ${soldItems.length}
+- Total Revenue: RM${totalRevenue}
+- Weekly Visitors: ${weekVisitors}
+- Top Collection: ${topCollection}
 
-Provide insights in bullet points (•), keep it short and actionable.`;
+Berikan 3–4 insight ringkas, actionable, dan relevan dalam Bahasa Malaysia (tone santai tapi profesional).
+Gunakan bullet points.
+`
 
     const aiResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${openRouterApiKey}`,
+        Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         model: 'meta-llama/llama-3.3-70b-instruct:free',
         messages: [{ role: 'user', content: prompt }],
       }),
-    });
+    })
 
-    if (!aiResponse.ok) {
-      const errorText = await aiResponse.text();
-      console.error('OpenRouter API error:', errorText);
-      return NextResponse.json(
-        { error: 'Failed to generate AI insights' },
-        { status: 500 }
-      );
-    }
+    const aiJson = await aiResponse.json()
+    const insightText =
+      aiJson.choices?.[0]?.message?.content ?? 'Tiada insight.'
 
-    const aiData = await aiResponse.json();
-    const insightText = aiData.choices?.[0]?.message?.content || 'No insights generated';
-
-    const { error: insertError } = await supabase.from('ai_insight_logs').insert({
+    // =========================
+    // 6. SAVE LOG
+    // =========================
+    await supabase.from('ai_insight_logs').insert({
       insight_text: insightText,
       metrics,
-    });
-
-    if (insertError) {
-      console.error('Failed to log AI insight:', insertError);
-    }
+    })
 
     return NextResponse.json({
       insight: insightText,
       metrics,
       cached: false,
-    });
-  } catch (error) {
-    console.error('AI insights error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    })
+  } catch (err) {
+    console.error(err)
+    return NextResponse.json({ error: 'AI insight failed' }, { status: 500 })
   }
 }
 
 export async function GET() {
-  try {
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+  const { data } = await supabase
+    .from('ai_insight_logs')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single()
 
-    const { data, error } = await supabase
-      .from('ai_insight_logs')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .single();
+  if (!data) return NextResponse.json({ cached: false })
 
-    if (error || !data) {
-      return NextResponse.json({ cached: false });
-    }
-
-    const cacheAge = Date.now() - new Date(data.created_at).getTime();
-    const maxCacheAge = 60 * 60 * 1000;
-
-    if (cacheAge > maxCacheAge) {
-      return NextResponse.json({ cached: false });
-    }
-
-    return NextResponse.json({
-      insight: data.insight_text,
-      metrics: data.metrics,
-      cached: true,
-      cachedAt: data.created_at,
-    });
-  } catch (error) {
-    console.error('AI insights cache check error:', error);
-    return NextResponse.json({ cached: false });
-  }
+  return NextResponse.json({
+    insight: data.insight_text,
+    metrics: data.metrics,
+    cached: true,
+  })
 }

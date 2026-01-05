@@ -93,103 +93,7 @@ export default function ReportClient({
     `,
   })
 
-  const handleDownloadPDF = async () => {
-    if (!reportRef.current) return
 
-    try {
-      const jsPDFModule = await import('jspdf')
-      const html2canvasModule = await import('html2canvas')
-
-      const pdf = new jsPDFModule.default('p', 'mm', 'a4')
-      const pdfWidth = pdf.internal.pageSize.getWidth()
-      const pdfHeight = pdf.internal.pageSize.getHeight()
-      
-      const canvas = await html2canvasModule.default(reportRef.current, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        backgroundColor: '#ffffff',
-        onclone: (clonedDoc) => {
-          const clonedElement = clonedDoc.querySelector('[data-report-content]') as HTMLElement
-          if (clonedElement) {
-            clonedElement.style.background = '#ffffff'
-            
-            const allElements = clonedElement.querySelectorAll('*')
-            allElements.forEach((el) => {
-              const htmlEl = el as HTMLElement
-              
-              const colorMap: Record<string, string> = {
-                'text-purple-600': 'rgb(147, 51, 234)',
-                'text-purple-900': 'rgb(88, 28, 135)',
-                'text-emerald-600': 'rgb(5, 150, 105)',
-                'text-emerald-900': 'rgb(6, 78, 59)',
-                'text-blue-600': 'rgb(37, 99, 235)',
-                'text-blue-900': 'rgb(30, 58, 138)',
-                'text-pink-600': 'rgb(219, 39, 119)',
-                'text-pink-900': 'rgb(131, 24, 67)',
-                'text-green-600': 'rgb(22, 163, 74)',
-                'text-green-800': 'rgb(22, 101, 52)',
-                'text-green-900': 'rgb(20, 83, 45)',
-                'text-orange-600': 'rgb(234, 88, 12)',
-                'text-orange-800': 'rgb(154, 52, 18)',
-                'text-orange-900': 'rgb(124, 45, 18)',
-                'text-indigo-600': 'rgb(79, 70, 229)',
-                'text-indigo-900': 'rgb(49, 46, 129)',
-                'text-teal-600': 'rgb(13, 148, 136)',
-                'text-teal-900': 'rgb(19, 78, 74)',
-                'text-yellow-800': 'rgb(133, 77, 14)',
-                'text-red-800': 'rgb(153, 27, 27)',
-                'bg-purple-50': 'rgb(250, 245, 255)',
-                'bg-pink-50': 'rgb(253, 242, 248)',
-                'bg-emerald-50': 'rgb(236, 253, 245)',
-                'bg-blue-50': 'rgb(239, 246, 255)',
-                'bg-green-50': 'rgb(240, 253, 244)',
-                'bg-green-100': 'rgb(220, 252, 231)',
-                'bg-orange-50': 'rgb(255, 247, 237)',
-                'bg-orange-100': 'rgb(255, 237, 213)',
-                'bg-indigo-50': 'rgb(238, 242, 255)',
-                'bg-teal-50': 'rgb(240, 253, 250)',
-                'bg-yellow-100': 'rgb(254, 249, 195)',
-                'bg-red-100': 'rgb(254, 226, 226)',
-              }
-              
-              htmlEl.classList.forEach((className) => {
-                if (colorMap[className]) {
-                  if (className.startsWith('text-')) {
-                    htmlEl.style.color = colorMap[className]
-                  } else if (className.startsWith('bg-')) {
-                    htmlEl.style.backgroundColor = colorMap[className]
-                  }
-                }
-              })
-            })
-          }
-        }
-      })
-
-      const imgData = canvas.toDataURL('image/png')
-      const imgWidth = pdfWidth - 20
-      const imgHeight = (canvas.height * imgWidth) / canvas.width
-
-      let heightLeft = imgHeight
-      let position = 10
-
-      pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight)
-      heightLeft -= pdfHeight - 20
-
-      while (heightLeft > 0) {
-        position = heightLeft - imgHeight + 10
-        pdf.addPage()
-        pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight)
-        heightLeft -= pdfHeight - 20
-      }
-      
-      pdf.save(`Analytics_Report_${dateRangeLabel}_${new Date().toISOString().split('T')[0]}.pdf`)
-    } catch (error) {
-      console.error('Error generating PDF:', error)
-      alert('Failed to generate PDF. Please use the Print button instead.')
-    }
-  }
 
   const handleDateRangeChange = (range: string) => {
     router.push(`/admin/reports/generate?range=${range}`)
@@ -228,12 +132,13 @@ export default function ReportClient({
           </button>
 
           <button
-            onClick={handleDownloadPDF}
-            className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-2 font-semibold text-white shadow-lg shadow-purple-500/30 transition-all hover:scale-105 hover:shadow-xl hover:shadow-purple-500/50"
-          >
-            <Download className="h-4 w-4" />
-            Download PDF
-          </button>
+  onClick={handlePrint}
+  className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-2 font-semibold text-white shadow-lg shadow-purple-500/30 transition-all hover:scale-105 hover:shadow-xl hover:shadow-purple-500/50"
+>
+  <Download className="h-4 w-4" />
+  Save as PDF
+</button>
+
         </div>
       </div>
 
