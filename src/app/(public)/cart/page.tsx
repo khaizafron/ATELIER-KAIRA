@@ -22,16 +22,26 @@ export default function CartPage() {
 
   const totalPrice = cartItems.reduce((sum, item) => sum + item.price, 0)
 
+  /* ---------------- WHATSAPP (CLEAN & PROFESSIONAL) ---------------- */
   const handleWhatsAppAll = () => {
     const baseUrl = window.location.origin
-    const itemLinks = cartItems
-      .map((item) => `${baseUrl}/collection/${item.slug}`)
-      .join("\n")
-    
-    const message = `Hai! Barang ni masih ada?\n\n${itemLinks}\n\nTotal: RM ${totalPrice.toFixed(0)}`
-    const whatsappUrl = `https://wa.me/601126941552?text=${encodeURIComponent(message)}`
-    
-    window.open(whatsappUrl, '_blank')
+
+    const itemsText = cartItems
+      .map((item, index) => {
+        return `${index + 1}. ${item.title}\n   ${baseUrl}/collection/${item.slug}`
+      })
+      .join("\n\n")
+
+    const message = `Hi 👋  
+I’d like to check availability for the following items:\n\n${itemsText}\n\nTotal estimated: RM ${totalPrice.toFixed(
+      0
+    )}\n\nThank you.`
+
+    const whatsappUrl = `https://wa.me/601126941552?text=${encodeURIComponent(
+      message
+    )}`
+
+    window.open(whatsappUrl, "_blank", "noopener,noreferrer")
   }
 
   if (cartItems.length === 0) {
@@ -40,8 +50,12 @@ export default function CartPage() {
         <h1 className="text-3xl font-semibold text-black/90 mb-10">Your Cart</h1>
         <GlassCard className="py-20 text-center">
           <ShoppingBag className="h-16 w-16 mx-auto mb-4 text-black/20" />
-          <h2 className="text-xl font-medium text-black/70 mb-2">Your cart is empty</h2>
-          <p className="text-black/50 mb-6">Start adding items to your cart!</p>
+          <h2 className="text-xl font-medium text-black/70 mb-2">
+            Your cart is empty
+          </h2>
+          <p className="text-black/50 mb-6">
+            Start adding items to your cart!
+          </p>
           <Link href="/collection">
             <GlassButton>Browse Collection</GlassButton>
           </Link>
@@ -80,6 +94,7 @@ export default function CartPage() {
                   )}
                 </div>
               </Link>
+
               <div className="flex flex-1 flex-col justify-between">
                 <div>
                   <Link href={`/collection/${item.slug}`}>
@@ -91,6 +106,7 @@ export default function CartPage() {
                     RM {Number(item.price).toFixed(0)}
                   </p>
                 </div>
+
                 <div className="flex gap-2">
                   <GlassButton
                     variant="outline"
@@ -115,7 +131,7 @@ export default function CartPage() {
             RM {totalPrice.toFixed(0)}
           </span>
         </div>
-        
+
         {cartItems.length >= 2 && (
           <GlassButton
             className="w-full gap-2"
@@ -126,7 +142,7 @@ export default function CartPage() {
             Bring these items to the seller
           </GlassButton>
         )}
-        
+
         {cartItems.length === 1 && (
           <Link href={`/collection/${cartItems[0].slug}`}>
             <GlassButton className="w-full gap-2" size="lg">

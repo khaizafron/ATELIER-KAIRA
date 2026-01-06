@@ -156,38 +156,38 @@ if (!hasRecordedView.current) {
   }, [slug, router])
 
   const handleWhatsAppClick = () => {
-    if (!item) return
+  if (!item) return
 
-    const primaryImage = item.images?.find((img) => img.is_primary) || item.images?.[0]
-    
-    const message = encodeURIComponent(
-      `barang ni ada stok?\n\nItem: ${item.title}\nItem ID: ${item.id}${
-        primaryImage ? `\nImage: ${primaryImage.image_url}` : ""
-      }`
-    )
+  // 🔗 PUBLIC ITEM PAGE (INILAH KUNCI)
+  const productUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/item/${item.slug}`
 
-    window.open(
-      `https://wa.me/601126941552?text=${message}`,
-      "_blank",
-      "noopener,noreferrer"
-    )
+  const message = encodeURIComponent(
+    `Hi 👋\nMay I check if this item is still available?\n\n${item.title}\n${productUrl}\n\nThank you.`
+  )
 
-    try {
-      const body = JSON.stringify({
-        item_id: item.id,
-        visitor_id: getVisitorId(),
-      })
+  window.open(
+    `https://wa.me/601126941552?text=${message}`,
+    "_blank",
+    "noopener,noreferrer"
+  )
 
-      const blob = new Blob([body], { type: "application/json" })
-
-      navigator.sendBeacon(
-        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/whatsapp_clicks`,
-        blob
+  // 📊 analytics (JANGAN BUANG)
+  try {
+    navigator.sendBeacon(
+      `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/whatsapp_clicks`,
+      new Blob(
+        [
+          JSON.stringify({
+            item_id: item.id,
+            visitor_id: getVisitorId(),
+          }),
+        ],
+        { type: "application/json" }
       )
-    } catch {
-      // analytics must never break UX
-    }
-  }
+    )
+  } catch {}
+}
+
 
   if (loading) {
     return (
