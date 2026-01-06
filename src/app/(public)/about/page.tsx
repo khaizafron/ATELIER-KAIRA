@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useRef } from 'react';
@@ -49,15 +48,25 @@ export default function AboutPage() {
     offset: ["start end", "end start"]
   });
 
-  const smoothProgress = useSpring(scrollYProgress, { stiffness: 60, damping: 20 });
+  // SMOOTHER SPRING CONFIGURATION
+  const smoothProgress = useSpring(scrollYProgress, { 
+    stiffness: 50, 
+    damping: 30,
+    restDelta: 0.001 
+  });
   
-  // Hero Transforms
-  const heroScale = useTransform(smoothProgress, [0, 0.2], [1, 0.9]);
-  const heroRadius = useTransform(smoothProgress, [0, 0.2], ["0rem", "5rem"]);
-  const heroOpacity = useTransform(smoothProgress, [0, 0.2], [1, 0]);
+  // Hero Transforms - SMOOTHER
+  const heroScale = useTransform(smoothProgress, [0, 0.25], [1, 0.92]);
+  const heroRadius = useTransform(smoothProgress, [0, 0.25], ["0rem", "4rem"]);
+  const heroOpacity = useTransform(smoothProgress, [0, 0.2, 0.25], [1, 0.6, 0]);
 
-  // Horizontal Scroll Math
-  const xTranslate = useTransform(horizontalProgress, [0.1, 0.9], ["0%", "-65%"]);
+  // Horizontal Scroll - SMOOTHER
+  const horizontalSpring = useSpring(horizontalProgress, {
+    stiffness: 40,
+    damping: 25,
+    restDelta: 0.001
+  });
+  const xTranslate = useTransform(horizontalSpring, [0.15, 0.85], ["5%", "-65%"]);
 
   return (
     <div ref={containerRef} className="relative bg-[#FDFCFB] text-[#1a1a1a]">
@@ -70,7 +79,7 @@ export default function AboutPage() {
             borderRadius: heroRadius,
             opacity: heroOpacity
           }}
-          className="relative w-full h-full overflow-hidden"
+          className="relative w-full h-full overflow-hidden will-change-transform"
         >
           <img 
             src="/aboutbg.jpg"
@@ -84,7 +93,7 @@ export default function AboutPage() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1 }}
+              transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
               className="text-[10px] font-black uppercase tracking-[1em] text-black/40 mb-12"
             >
               The Kaïra Manifesto
@@ -93,7 +102,7 @@ export default function AboutPage() {
               <motion.span 
                 initial={{ y: "100%" }}
                 animate={{ y: 0 }}
-                transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 1.4, ease: [0.25, 0.1, 0.25, 1] }}
                 className="inline-block"
               >
                 THE ARCHIVE
@@ -116,7 +125,8 @@ export default function AboutPage() {
             <motion.div 
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.9, ease: [0.25, 0.1, 0.25, 1] }}
               className="space-y-6"
             >
               <div className="flex items-center gap-4 text-amber-600">
@@ -135,27 +145,40 @@ export default function AboutPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              <div className="p-10 rounded-[2.5rem] bg-white border border-black/[0.03] shadow-[0_10px_40px_rgba(0,0,0,0.02)] space-y-6">
+              <motion.div 
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
+                className="p-10 rounded-[2.5rem] bg-white border border-black/[0.03] shadow-[0_10px_40px_rgba(0,0,0,0.02)] space-y-6"
+              >
                 <Fingerprint className="h-6 w-6 text-amber-600" />
                 <h4 className="font-bold uppercase tracking-widest text-xs">Biometric Verification</h4>
                 <p className="text-sm text-black/40 leading-relaxed font-light">Structural analysis of thread-count and artisanal construction methods.</p>
-              </div>
-              <div className="p-10 rounded-[2.5rem] bg-[#F5F2F0] space-y-6">
+              </motion.div>
+              <motion.div 
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.8, delay: 0.15, ease: [0.25, 0.1, 0.25, 1] }}
+                className="p-10 rounded-[2.5rem] bg-[#F5F2F0] space-y-6"
+              >
                 <History className="h-6 w-6 text-amber-600" />
                 <h4 className="font-bold uppercase tracking-widest text-xs">Era Chronology</h4>
                 <p className="text-sm text-black/40 leading-relaxed font-light">Documenting the cultural movement behind every silhouette we acquire.</p>
-              </div>
+              </motion.div>
             </div>
           </div>
 
           <motion.div 
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
             className="relative group"
           >
             <div className="relative aspect-[4/5] rounded-[4rem] overflow-hidden shadow-2xl">
-              <img src="labbg.jpg" className="w-full h-full object-cover grayscale-[0.2] transition-transform duration-1000 group-hover:scale-105" alt="Curator Detail" />
+              <img src="labbg.jpg" className="w-full h-full object-cover grayscale-[0.2] transition-transform duration-[2000ms] ease-out group-hover:scale-105" alt="Curator Detail" />
               <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent flex flex-col justify-end p-16">
                 <span className="text-amber-700 text-[10px] font-black uppercase tracking-[0.5em] mb-4">Laboratory Archives</span>
                 <p className="text-2xl italic font-display text-black/80 leading-tight">"Truth is found in the texture, not the tag."</p>
@@ -172,7 +195,7 @@ export default function AboutPage() {
         <div className="sticky top-0 h-screen overflow-hidden flex items-center">
           <motion.div 
             style={{ x: xTranslate }}
-            className="flex gap-20 px-[10vw] items-center"
+            className="flex gap-20 px-[10vw] items-center will-change-transform"
           >
             <div className="flex-shrink-0 w-[40vw] flex flex-col justify-center space-y-8">
               <span className="text-amber-600 text-[10px] font-black uppercase tracking-[0.8em]">Temporal Curation</span>
@@ -189,8 +212,8 @@ export default function AboutPage() {
                   {era.year}
                 </div>
                 <div className="relative w-full h-full rounded-[3.5rem] overflow-hidden bg-white shadow-[0_30px_60px_rgba(0,0,0,0.05)] border border-black/[0.02]">
-                  <img src={era.img} className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-110" alt={era.title} />
-                  <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <img src={era.img} className="w-full h-full object-cover transition-all duration-[1500ms] ease-out group-hover:scale-110" alt={era.title} />
+                  <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   <div className="absolute inset-0 flex flex-col justify-end p-12 bg-gradient-to-t from-white via-white/10 to-transparent">
                     <span className="text-amber-700 text-xs font-black uppercase tracking-[0.4em] mb-3">{era.year}</span>
                     <h3 className="text-4xl font-bold mb-4 text-black">{era.title}</h3>
@@ -207,7 +230,13 @@ export default function AboutPage() {
       <section className="py-60 px-6 max-w-7xl mx-auto">
         <div className="relative rounded-[5rem] overflow-hidden bg-white p-12 md:p-32 shadow-[0_50px_100px_rgba(0,0,0,0.03)] border border-black/[0.02]">
           <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
-            <div className="space-y-12">
+            <motion.div 
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.9, ease: [0.25, 0.1, 0.25, 1] }}
+              className="space-y-12"
+            >
               <div className="inline-flex items-center gap-6">
                 <div className="w-16 h-16 rounded-[1.5rem] bg-[#F5F2F0] flex items-center justify-center">
                   <Lock className="h-8 w-8 text-black" />
@@ -226,24 +255,25 @@ export default function AboutPage() {
               
               <div className="pt-6">
                 <MagneticButton>
-  <Link href="/visit-us" className="block">
-    <button
-      type="button"
-      className="group relative px-12 py-6 rounded-full bg-black text-white font-bold uppercase tracking-[0.4em] text-[10px] flex items-center gap-4 hover:bg-amber-600 transition-colors"
-    >
-      Find Us At
-      <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-2" />
-    </button>
-  </Link>
-</MagneticButton>
-
+                  <Link href="/visit-us" className="block">
+                    <button
+                      type="button"
+                      className="group relative px-12 py-6 rounded-full bg-black text-white font-bold uppercase tracking-[0.4em] text-[10px] flex items-center gap-4 hover:bg-amber-600 transition-colors duration-300"
+                    >
+                      Find Us At
+                      <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-2" />
+                    </button>
+                  </Link>
+                </MagneticButton>
               </div>
-            </div>
+            </motion.div>
 
             <div className="grid grid-cols-2 gap-8 items-start">
                <motion.div 
                  initial={{ opacity: 0, y: 20 }}
                  whileInView={{ opacity: 1, y: 0 }}
+                 viewport={{ once: true, margin: "-100px" }}
+                 transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
                  className="space-y-8"
                >
                   <div className="aspect-[3/4] rounded-[2.5rem] overflow-hidden shadow-xl border border-black/[0.03]">
@@ -256,7 +286,8 @@ export default function AboutPage() {
                <motion.div 
                  initial={{ opacity: 0, y: 40 }}
                  whileInView={{ opacity: 1, y: 0 }}
-                 transition={{ delay: 0.2 }}
+                 viewport={{ once: true, margin: "-100px" }}
+                 transition={{ duration: 0.8, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
                  className="space-y-8 pt-20"
                >
                   <div className="aspect-[3/4] rounded-[2.5rem] overflow-hidden shadow-xl border border-black/[0.03]">
@@ -276,7 +307,8 @@ export default function AboutPage() {
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "-150px" }}
+          transition={{ duration: 1, ease: [0.25, 0.1, 0.25, 1] }}
           className="max-w-5xl mx-auto px-6 space-y-16 relative z-10"
         >
           <h2 className="text-5xl md:text-8xl font-bold leading-tight tracking-tight italic font-display text-black/70">
@@ -310,4 +342,4 @@ export default function AboutPage() {
       
     </div>
   );
-};
+}

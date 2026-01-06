@@ -141,6 +141,10 @@ export function GlassFooter({ className }: GlassFooterProps) {
               >
                 Terms of Use
               </Link>
+              <p className="text-[12px] text-black/30 dark:text-white/25">
+  Operated by LUXERA COGNITIVE RESOURCES (No. 202503352888 / 003808430-T)
+</p>
+
             </div>
           </div>
         </div>

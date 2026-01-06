@@ -1,3 +1,7 @@
+export const dynamic = "force-dynamic"
+export const revalidate = 0
+
+
 import { createClient } from "@supabase/supabase-js"
 import { GlassCard } from "@/components/glass"
 import { Eye, MessageCircle, TrendingUp, Download, Printer, Filter, Calendar, BarChart3, PieChart, ArrowUpRight, ArrowDownRight, DollarSign } from "lucide-react"

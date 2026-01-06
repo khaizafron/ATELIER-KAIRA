@@ -66,9 +66,11 @@ export async function POST() {
     // 5. AI PROMPT
     // =========================
     const prompt = `
-Anda ialah AI Business Analyst untuk Kaira Atelier.
+You are a senior AI Business Analyst for Kaira Atelier, a curated fashion & preloved store.
 
-Data minggu ini:
+Analyze the following business metrics for this week and generate **3–4 concise, high-impact, and actionable business insights**.
+
+Business Data:
 - Total Items: ${totalItems}
 - Available Items: ${availableItems.length}
 - Sold Items: ${soldItems.length}
@@ -76,8 +78,17 @@ Data minggu ini:
 - Weekly Visitors: ${weekVisitors}
 - Top Collection: ${topCollection}
 
-Berikan 3–4 insight ringkas, actionable, dan relevan dalam Bahasa Malaysia (tone santai tapi profesional).
-Gunakan bullet points.
+Guidelines:
+- Write in **clear, professional, but friendly English**
+- Focus on **patterns, opportunities, risks, and next actions**
+- Avoid repeating raw numbers unless needed for insight
+- Each point must suggest a **specific business action or decision**
+- Keep insights short, sharp, and practical
+
+Format:
+- Use bullet points (•)
+- 1 insight = 1–2 short sentences
+
 `
 
     const aiResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
