@@ -231,7 +231,7 @@ export const HeroSection: React.FC = () => {
           
           <MagneticButton>
   <a
-    href="https://wa.link/a54ut7"
+    href="https://wa.link/91rfok"
     target="_blank"
     rel="noopener noreferrer"
     className="block"
