@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useRef } from 'react';
@@ -12,23 +11,31 @@ const CONCIERGE_CHANNELS = [
     name: "Liaison via WhatsApp",
     label: "Immediate Acquisition",
     link: "https://wa.me/601126941552",
-    img: "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?auto=format&fit=crop&q=80&w=1200", // High-end boutique interior
+    img: "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?auto=format&fit=crop&q=80&w=1200",
     meta: "Direct line to our senior curators."
   },
   {
     id: "02",
-    name: "Visual Narrative / Tiktok",
-    label: "Digital Curation",
-    link: "https://tiktok.com/@atelierkaira",
-    img: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&q=80&w=1200", // High-fashion editorial
-    meta: "Daily updates from the atelier floor."
+    name: "Visual Archive / Instagram",
+    label: "Editorial Showcase",
+    link: "https://instagram.com/atelier.kaira",
+    img: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&q=80&w=1200",
+    meta: "Curated daily chronicles from the vault."
   },
   {
     id: "03",
+    name: "Visual Narrative / Tiktok",
+    label: "Digital Curation",
+    link: "https://tiktok.com/@atelierkaira",
+    img: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&q=80&w=1200",
+    meta: "Daily updates from the atelier floor."
+  },
+  {
+    id: "04",
     name: "Formal Inquiry / Email",
     label: "Institutional Correspondence",
-    link: "mailto:atelierkaira@gmail.com",
-    img: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1200", // Minimalist architecture
+    link: "mailto:kaira.atelier@gmail.com",
+    img: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1200",
     meta: "Museum lending and press relations."
   }
 ];
@@ -46,17 +53,15 @@ const ContactPage: React.FC = () => {
 
   return (
     <div
-  ref={containerRef}
-  className="relative bg-[#F9F8F6] text-[#1A1A1A] overflow-hidden -mt-24"
->
-
-      {/* TACTILE OVERLAY (Subtle Silk Texture) */}
+      ref={containerRef}
+      className="relative bg-[#F9F8F6] text-[#1A1A1A] overflow-hidden -mt-24"
+    >
+      {/* TACTILE OVERLAY */}
       <div className="fixed inset-0 pointer-events-none z-[100] opacity-[0.03] mix-blend-multiply" 
            style={{ backgroundImage: `url('https://grainy-gradients.vercel.app/noise.svg')` }} />
 
       {/* SECTION 1: EDITORIAL HERO */}
       <section className="relative h-[calc(100vh-6rem)] pt-24 flex flex-col items-center justify-center text-center px-6 overflow-hidden">
-
         <motion.div 
           style={{ opacity: heroOpacity, scale: heroScale }}
           className="absolute inset-0 z-0"
@@ -107,7 +112,7 @@ const ContactPage: React.FC = () => {
         </div>
       </section>
 
-      {/* SECTION 3: THE PRIVATE CORRESPONDENCE (LUXURY STATIONERY) */}
+      {/* SECTION 3: THE PRIVATE CORRESPONDENCE */}
       <section className="py-80 px-6">
         <motion.div 
           initial={{ opacity: 0, scale: 0.95 }}
@@ -119,7 +124,6 @@ const ContactPage: React.FC = () => {
           <div className="absolute -inset-20 bg-amber-50/30 blur-[100px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
           
           <div className="relative bg-white rounded-[4rem] p-12 md:p-32 shadow-[0_80px_150px_rgba(0,0,0,0.03)] border border-black/[0.01] overflow-hidden">
-            {/* Design accents */}
             <div className="absolute top-0 right-0 p-12 opacity-10">
               <Sparkles className="h-20 w-20 text-[#A68966]" />
             </div>
@@ -151,7 +155,7 @@ const ContactPage: React.FC = () => {
                   </div>
                   <p className="text-xl font-light text-white/80">Activate our global network of curators to locate your specific archival silhouette.</p>
                   <MagneticButton>
-                    <button className="w-full   py-4 px-5 rounded-full bg-[#A68966] text-white font-bold uppercase tracking-[0.4em] text-[8px] flex items-center justify-center gap-6 transition-transform hover:scale-105 active:scale-95 shadow-lg">
+                    <button className="w-full py-4 px-5 rounded-full bg-[#A68966] text-white font-bold uppercase tracking-[0.4em] text-[8px] flex items-center justify-center gap-6 transition-transform hover:scale-105 active:scale-95 shadow-lg">
                       Enter The Chamber <ArrowUpRight className="h-4 w-4" />
                     </button>
                   </MagneticButton>
@@ -162,7 +166,7 @@ const ContactPage: React.FC = () => {
         </motion.div>
       </section>
 
-      {/* SECTION 4: GLOBAL DIRECTORY (REFINED MINIMALISM) */}
+      {/* SECTION 4: GLOBAL DIRECTORY */}
       <section className="py-60 border-t border-black/5 bg-white relative z-10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-end gap-16">
@@ -176,7 +180,7 @@ const ContactPage: React.FC = () => {
             
             <div className="grid grid-cols-2 gap-x-20 gap-y-10">
               {[
-                { name: "Instagram", link: "https://instagram.com/atelierkaira", icon: <Instagram /> },
+                { name: "Instagram", link: "https://instagram.com/atelier.kaira", icon: <Instagram /> },
                 { name: "Facebook", link: "https://facebook.com/atelierkaira", icon: <Globe /> },
                 { name: "TikTok", link: "https://tiktok.com/@atelierkaira", icon: <Compass /> },
                 { name: "The Archive", link: "#", icon: <Sparkles /> }
@@ -202,24 +206,14 @@ const ContactPage: React.FC = () => {
           viewport={{ once: true }}
           className="max-w-6xl mx-auto px-6 space-y-20 relative z-10"
         >
-          <h4 className="
-  text-5xl md:text-[5rem]
-  font-bold italic font-display
-  leading-[0.95]
-  tracking-tighter
-  pb-[0.2em]
-  text-transparent bg-clip-text
-  bg-gradient-to-r from-neutral-900 via-neutral-700 to-neutral-400
-">
-   "Your pursuit is our legacy."
-</h4>
-
-
+          <h4 className="text-5xl md:text-[5rem] font-bold italic font-display leading-[0.95] tracking-tighter pb-[0.2em] text-transparent bg-clip-text bg-gradient-to-r from-neutral-900 via-neutral-700 to-neutral-400">
+            "Your pursuit is our legacy."
+          </h4>
           
           <div className="flex flex-col items-center gap-20">
             <div className="flex flex-col items-center gap-8">
-                <div className="w-px h-32 bg-gradient-to-b from-black/20 to-transparent" />
-                <div className="text-[10px] font-black uppercase tracking-[1.5em] text-black/5">Establishing Connection</div>
+              <div className="w-px h-32 bg-gradient-to-b from-black/20 to-transparent" />
+              <div className="text-[10px] font-black uppercase tracking-[1.5em] text-black/5">Establishing Connection</div>
             </div>
           </div>
         </motion.div>
@@ -239,7 +233,7 @@ const EditorialSection: React.FC<{ channel: any, index: number }> = ({ channel, 
       ref={ref}
       className={`flex flex-col lg:flex-row gap-24 items-center ${index % 2 !== 0 ? 'lg:flex-row-reverse' : ''}`}
     >
-      {/* IMAGE FRAME WITH CURTAIN REVEAL */}
+      {/* IMAGE FRAME */}
       <div className="w-full lg:w-[55%] relative group">
         <motion.div 
           initial={{ clipPath: "inset(0 100% 0 0)" }}
@@ -263,8 +257,8 @@ const EditorialSection: React.FC<{ channel: any, index: number }> = ({ channel, 
           className={`absolute -bottom-8 ${index % 2 !== 0 ? '-left-8' : '-right-8'} p-8 bg-white border border-black/[0.03] shadow-3xl rounded-[2rem] hidden md:block z-30`}
         >
           <div className="flex items-center gap-4">
-             <div className="w-8 h-px bg-[#A68966]" />
-             <span className="text-[9px] font-black uppercase tracking-widest text-[#A68966]">{channel.id} / CHANNEL REF</span>
+            <div className="w-8 h-px bg-[#A68966]" />
+            <span className="text-[9px] font-black uppercase tracking-widest text-[#A68966]">{channel.id} / CHANNEL REF</span>
           </div>
         </motion.div>
       </div>
@@ -273,9 +267,9 @@ const EditorialSection: React.FC<{ channel: any, index: number }> = ({ channel, 
       <div className="w-full lg:w-[45%] space-y-12">
         <div className="space-y-6">
           <motion.div 
-             initial={{ opacity: 0, x: -20 }}
-             animate={isInView ? { opacity: 1, x: 0 } : {}}
-             className="flex items-center gap-4 text-[#A68966]"
+            initial={{ opacity: 0, x: -20 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            className="flex items-center gap-4 text-[#A68966]"
           >
             <div className="w-12 h-px bg-current" />
             <span className="text-[10px] font-black uppercase tracking-[0.6em]">{channel.label}</span>

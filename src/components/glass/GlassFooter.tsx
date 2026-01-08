@@ -76,7 +76,7 @@ export function GlassFooter({ className }: GlassFooterProps) {
                 href="mailto:admin@atelierkaira.com"
                 className="transition-all hover:translate-x-0.5 hover:text-black dark:hover:text-white"
               >
-                atelierkaira@gmail.com
+                kaira.atelier@gmail.com
               </a>
               <a
                 href="https://wa.me/601126941552"
