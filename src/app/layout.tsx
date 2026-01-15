@@ -29,7 +29,7 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "Organization",
               name: "Atelier Kaira",
-              url: "https://atelierkaira.com",
+              url: "https://www.atelierkaira.com",
               logo: "https://atelierkaira.com/logo.png",
               sameAs: [
                 "https://www.instagram.com/atelier.kaira",
