@@ -105,7 +105,7 @@ export default async function GenerateReportPage({
   /* ---------------- SALES / REVENUE (FIXED) ---------------- */
   const soldItems = safeItems.filter(
     item =>
-      item.status === "sold" &&
+      (item.status === "sold" || item.status === "offline_sold") &&
       item.price !== null &&
       !isNaN(Number(item.price))
   )

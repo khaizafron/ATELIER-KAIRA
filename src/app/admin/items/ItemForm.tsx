@@ -166,7 +166,7 @@ export function ItemForm({ item, measurements }: ItemFormProps) {
       } else {
         // ✅ CREATE new item - GET TOKEN FIRST
         const supabase = createClient()
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+        const { data: { session }, error: sessionError } = await supabase.auth.refreshSession()
 
         if (!session?.access_token || sessionError) {
           alert("Authentication failed. Please login again.")
